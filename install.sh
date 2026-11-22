@@ -541,14 +541,14 @@ if [[ "$ONLY_CONFIG" == false ]]; then
 
   cat > "$HOME/.config/gtk-3.0/settings.ini" <<'GTK3'
 [Settings]
-gtk-theme-name=Nordic
+gtk-theme-name=adw-gtk3-dark
 gtk-icon-theme-name=Adwaita
 gtk-application-prefer-dark-theme=1
 GTK3
 
   cat > "$HOME/.config/gtk-4.0/settings.ini" <<'GTK4'
 [Settings]
-gtk-theme-name=Nordic
+gtk-theme-name=adw-gtk3-dark
 gtk-icon-theme-name=Adwaita
 gtk-application-prefer-dark-theme=1
 GTK4
@@ -559,7 +559,7 @@ color-scheme=1
 PORTAL
 
   if command -v dconf >/dev/null 2>&1; then
-    dconf write /org/gnome/desktop/interface/gtk-theme "'Nordic'" || true
+    dconf write /org/gnome/desktop/interface/gtk-theme "'adw-gtk3-dark'" || true
     dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'" || true
     dconf write /org/gnome/desktop/interface/icon-theme "'Adwaita'" || true
   fi
