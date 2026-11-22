@@ -181,6 +181,7 @@ bind=SUPER,r,reload_config
 bind=SUPER,space,spawn,fuzzel --config ~/.config/mango/fuzzel/fuzzel.ini
 bind=SUPER,Return,spawn,foot
 bind=SUPER,b,spawn,brave-origin
+bind=SUPER+SHIFT,b,spawn,brave-origin --private-window
 bind=SUPER,f,spawn,thunar
 bind=SUPER,g,spawn,geany
 
