@@ -208,7 +208,7 @@
         "format-disconnected": "\udb81\uddaa ",
         "tooltip-format-disconnected": "Disconnected",
         "interval": 2,
-        "on-click": "nm-connection-editor"
+        "on-click-right": "~/.config/mango/config/scripts/wifi-menu"
     },
     "bluetooth": {
         "format": "",
