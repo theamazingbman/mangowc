@@ -384,6 +384,7 @@ PACKAGES_APPEARANCE=(
 PACKAGES_SYSTEM=(
   git curl wget unzip zip rsync nano vim python3 python3-pip
   inotify-tools procps-ng psmisc util-linux cups system-config-printer
+  wl-clip-persist
 )
 
 # ----------------------------------------------------------
@@ -529,14 +530,14 @@ if [[ "$ONLY_CONFIG" == false ]]; then
   cat > "$HOME/.config/gtk-3.0/settings.ini" <<'GTK3'
 [Settings]
 gtk-theme-name=Nordic
-gtk-icon-theme-name=Papirus
+gtk-icon-theme-name=Adwaita
 gtk-application-prefer-dark-theme=1
 GTK3
 
   cat > "$HOME/.config/gtk-4.0/settings.ini" <<'GTK4'
 [Settings]
 gtk-theme-name=Nordic
-gtk-icon-theme-name=Papirus
+gtk-icon-theme-name=Adwaita
 gtk-application-prefer-dark-theme=1
 GTK4
 
@@ -548,7 +549,7 @@ PORTAL
   if command -v dconf >/dev/null 2>&1; then
     dconf write /org/gnome/desktop/interface/gtk-theme "'Nordic'" || true
     dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'" || true
-    dconf write /org/gnome/desktop/interface/icon-theme "'Papirus'" || true
+    dconf write /org/gnome/desktop/interface/icon-theme "'Adwaita'" || true
   fi
 fi
 
