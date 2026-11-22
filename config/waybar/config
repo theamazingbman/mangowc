@@ -41,19 +41,25 @@
     ],
 
     // Modules configuration
-    "sway/workspaces": {
-        "disable-scroll": false,
-        "all-outputs": false,
-        //   "warp-on-scroll": false,
-        "on-click": "activate",
-        "format": "{icon}",
-        "format-icons": {
-            "persistent": "●"
-        },
-        "persistent-workspaces": {
-            "1": [], "2": [], "3": [], "4": [], "5": [], "6": []
-        }
+    "mango/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+        "1": "●",
+        "2": "●",
+        "3": "●",
+        "4": "●",
+        "5": "●",
+        "6": "●",
+        "active": "●",
+        "default": "○",
+        "urgent": "",
+        "empty": "○"
     },
+    "hide-empty": false,
+    "on-click": "activate",
+    "on-click-right": "toggle",
+    "sort-by-id": true
+   },
     "keyboard-state": {
         "numlock": true,
         "capslock": true,
