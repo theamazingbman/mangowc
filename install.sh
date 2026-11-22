@@ -95,9 +95,9 @@ if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_DIR="$HOME/.config/sway"
-TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/sway-setup.XXXXXX")"
-LOG_FILE="$HOME/sway-install.log"
+CONFIG_DIR="$HOME/.config/mango"
+TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/mango-setup.XXXXXX")"
+LOG_FILE="$HOME/mango-install.log"
 
 mkdir -p "$(dirname "$LOG_FILE")"
 exec > >(tee -a "$LOG_FILE") 2>&1
@@ -135,7 +135,7 @@ echo "  +-+-+-+-+-+-+-+-+-+-+-+-+  "
 printf '%b\n\n' "$NC"
 
 if [[ -t 0 && "$ASSUME_YES" == false ]]; then
-  read -r -p "Install Sway on Fedora? (y/n) " -n 1 REPLY
+  read -r -p "Install MangoWC on Fedora? (y/n) " -n 1 REPLY
   echo
   [[ "$REPLY" =~ ^[Yy]$ ]] || exit 1
 fi
@@ -218,9 +218,9 @@ enable_sddm() {
     return 0
   fi
   if sudo systemctl enable sddm.service; then
-    DM_SUMMARY="Display manager: SDDM enabled. Pick the 'Sway' session on the login screen."
-    if [[ ! -f /usr/share/wayland-sessions/sway.desktop ]]; then
-      warn "/usr/share/wayland-sessions/sway.desktop not found; Sway may not appear in SDDM's session list."
+    DM_SUMMARY="Display manager: SDDM enabled. Pick the 'Mango' session on the login screen."
+    if [[ ! -f /usr/share/wayland-sessions/mango.desktop ]]; then
+      warn "/usr/share/wayland-sessions/mango.desktop not found; Mango may not appear in SDDM's session list."
     fi
   else
     warn "Could not enable SDDM; leaving the current display manager unchanged."
@@ -313,15 +313,15 @@ install_wallpapers() {
   fi
 }
 
-# Makes every script in the Sway/Waybar config runnable.
+# Makes every script in the MangoWC/Waybar config runnable.
 #  1. everything in the known scripts directories
 #  2. any other file under the config dir that starts with a shebang
 fix_script_permissions() {
-  local sway_scripts="$CONFIG_DIR/scripts"
+  local mango_scripts="$CONFIG_DIR/scripts"
   local waybar_scripts="$CONFIG_DIR/waybar/scripts"
   local dir file count=0
 
-  for dir in "$sway_scripts" "$waybar_scripts"; do
+  for dir in "$mango_scripts" "$waybar_scripts"; do
     if [[ -d "$dir" ]]; then
       msg "Setting script permissions in $dir..."
       find "$dir" -type f -exec chmod +x {} + ||
@@ -345,7 +345,7 @@ fix_script_permissions() {
 # Package groups
 # ----------------------------------------------------------
 PACKAGES_CORE=(
-  sway swaybg swayidle swaylock waybar fuzzel foot
+  mangowm swaybg swayidle swaylock waybar fuzzel foot
   xorg-x11-server-Xwayland geany ristretto
 )
 PACKAGES_DISPLAY=(kanshi brightnessctl)
@@ -384,7 +384,7 @@ PACKAGES_APPEARANCE=(
 PACKAGES_SYSTEM=(
   git curl wget unzip zip rsync nano vim python3 python3-pip
   inotify-tools procps-ng psmisc util-linux cups system-config-printer
-  wl-clip-persist
+  wl-clip-persist dmenu
 )
 
 # ----------------------------------------------------------
@@ -416,7 +416,19 @@ if [[ "$ONLY_CONFIG" == false ]]; then
   # Needed for COPR and config-manager.
   install_group "DNF plugins" dnf-plugins-core
 
-  install_group "core Sway desktop" "${PACKAGES_CORE[@]}"
+  # MangoWC is distributed for Fedora through the third-party Terra repository.
+  if ! rpm -q mangowm >/dev/null 2>&1; then
+    msg "Adding the Terra repository for MangoWC..."
+    if sudo dnf install -y --nogpgcheck \
+        --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' \
+        terra-release; then
+      msg "Terra repository installed."
+    else
+      warn "Could not add the Terra repository; MangoWC installation may fail."
+    fi
+  fi
+
+  install_group "MangoWC desktop and Wayland tools" "${PACKAGES_CORE[@]}"
 
   if [[ "$SDDM_INSTALL" == "true" ]]; then
     install_group "SDDM display manager" sddm
@@ -500,8 +512,8 @@ if [[ "$ONLY_CONFIG" == false ]]; then
   if [[ "$SDDM_ENABLE" == "true" ]]; then
     enable_sddm
   elif [[ -z "$EXISTING_DM" && "$INSTALL_SDDM" == "false" ]]; then
-    warn "No display manager is enabled and SDDM was disabled by option. After reboot you will land on a text console; log in and run 'sway' to start the desktop."
-    DM_SUMMARY="Display manager: none enabled. Log in at the console and run 'sway'."
+    warn "No display manager is enabled and SDDM was disabled by option. After reboot you will land on a text console; log in and run 'mango' to start the desktop."
+    DM_SUMMARY="Display manager: none enabled. Log in at the console and run 'mango'."
   fi
 
   sudo systemctl set-default graphical.target ||
@@ -554,16 +566,16 @@ PORTAL
 fi
 
 # ----------------------------------------------------------
-# Sway configuration
+# MangoWC configuration
 # ----------------------------------------------------------
-# Back up an existing Sway configuration before copying this repository's config.
+# Back up an existing MangoWC configuration before copying this repository's config.
 if [[ -d "$CONFIG_DIR" ]]; then
   if [[ -t 0 && "$ASSUME_YES" == false ]]; then
-    read -r -p "Found existing Sway config. Back it up? (y/n) " -n 1 REPLY
+    read -r -p "Found existing MangoWC config. Back it up? (y/n) " -n 1 REPLY
     echo
     if [[ "$REPLY" =~ ^[Yy]$ ]]; then
       mv "$CONFIG_DIR" "$CONFIG_DIR.bak.$(date +%s)"
-      msg "Backed up existing Sway config."
+      msg "Backed up existing MangoWC config."
     else
       read -r -p "Overwrite without backup? (y/n) " -n 1 REPLY
       echo
@@ -572,37 +584,52 @@ if [[ -d "$CONFIG_DIR" ]]; then
     fi
   else
     mv "$CONFIG_DIR" "$CONFIG_DIR.bak.$(date +%s)"
-    msg "Non-interactive run: backed up existing Sway config."
+    msg "Non-interactive run: backed up existing MangoWC config."
   fi
 fi
 
-msg "Copying Sway configuration..."
+msg "Copying MangoWC configuration..."
 mkdir -p "$CONFIG_DIR"
 cp -a "$SCRIPT_DIR/config/." "$CONFIG_DIR/" ||
-  warn "Could not copy Sway config files; continuing."
+  warn "Could not copy MangoWC config files; continuing."
 
-# Configure the MATE PolicyKit authentication agent for Sway.
+# MangoWC's default user config is ~/.config/mango/config.conf.
+# Use the packaged default only when the repository did not provide one.
+if [[ ! -f "$CONFIG_DIR/config.conf" && -f /etc/mango/config.conf ]]; then
+  cp /etc/mango/config.conf "$CONFIG_DIR/config.conf" ||
+    warn "Could not copy the packaged MangoWC default config."
+fi
+
+# Update old Sway config paths in copied text/config files.
+while IFS= read -r -d '' file; do
+  sed -i \
+    -e 's|\$HOME/.config/sway|$HOME/.config/mango|g' \
+    -e "s|~/.config/sway|~/.config/mango|g" \
+    "$file" 2>/dev/null || true
+done < <(find "$CONFIG_DIR" -type f \( -name '*.conf' -o -name '*.ini' -o -name '*.json' -o -name '*.jsonc' -o -name '*.sh' -o -name '*.css' -o -name '*.py' \) -print0)
+
+# Configure the MATE PolicyKit authentication agent for MangoWC.
 POLKIT_AGENT="/usr/libexec/polkit-mate-authentication-agent-1"
-SWAY_CONFIG="$CONFIG_DIR/config"
-if [[ -x "$POLKIT_AGENT" && -f "$SWAY_CONFIG" ]]; then
-  if ! grep -qF "polkit-mate-authentication-agent-1" "$SWAY_CONFIG"; then
-    msg "Adding MATE PolicyKit authentication agent to Sway..."
-    cat >> "$SWAY_CONFIG" <<'POLKIT'
+MANGO_CONFIG="$CONFIG_DIR/config.conf"
+if [[ -x "$POLKIT_AGENT" && -f "$MANGO_CONFIG" ]]; then
+  if ! grep -qF "polkit-mate-authentication-agent-1" "$MANGO_CONFIG"; then
+    msg "Adding MATE PolicyKit authentication agent to MangoWC..."
+    cat >> "$MANGO_CONFIG" <<'POLKIT'
 
 # PolicyKit authentication agent
-exec /usr/libexec/polkit-mate-authentication-agent-1
+exec_once=/usr/libexec/polkit-mate-authentication-agent-1
 POLKIT
   else
     msg "PolicyKit authentication agent already configured."
   fi
 else
-  warn "MATE PolicyKit agent or Sway config not found; check startup configuration."
+  warn "MATE PolicyKit agent or Mango config.conf not found; check startup configuration."
 fi
 
 # Make every script runnable (runs after the copy, so it always sees the final files).
 fix_script_permissions
 
-# Foot config is kept in the Sway repository and linked to Foot's normal path.
+# Foot config is kept in the MangoWC repository and linked to Foot's normal path.
 mkdir -p "$HOME/.config"
 if [[ -e "$HOME/.config/foot" && ! -L "$HOME/.config/foot" ]]; then
   mv "$HOME/.config/foot" "$HOME/.config/foot.bak.$(date +%s)"
@@ -640,7 +667,7 @@ if [[ "$ONLY_CONFIG" == false ]]; then
 fi
 
 if [[ -f "$SCRIPT_DIR/QUICKSTART.md" ]]; then
-  cp "$SCRIPT_DIR/QUICKSTART.md" "$HOME/QUICKSTART-sway.md"
+  cp "$SCRIPT_DIR/QUICKSTART.md" "$HOME/QUICKSTART-mango.md"
 fi
 
 if [[ -f "$SCRIPT_DIR/nvidia-setup.sh" ]]; then
@@ -709,12 +736,12 @@ if [[ -n "$NOT_EXEC" ]]; then
   echo "$NOT_EXEC"
 fi
 
-msg "Sway setup script finished."
+msg "MangoWC setup script finished."
 echo
 echo "$DM_SUMMARY"
 echo
 echo "Next steps:"
-echo "  1. Review ~/.config/sway/config and your autostart commands."
+echo "  1. Review ~/.config/mango/config.conf and your autostart commands."
 echo "  2. Make sure Waybar, SwayNC, and the Polkit agent are started only once."
 echo "  3. Check $LOG_FILE for warnings before rebooting."
 echo "  4. Reboot when ready: sudo reboot"
