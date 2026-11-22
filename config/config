@@ -312,14 +312,14 @@ layer_rule=animation_type_close:zoom,layer_name:rofi
 # quickshell's network app (its own qs instance) — a small tool window that sizes itself to its content
 windowrule=isfloating:1,appid:org.quickshell
 windowrule=isfloating:1,appid:mpv
-windowrule=isfloating:1,appid:org.gnome.Loupe
+windowrule=isfloating:1,appid:nwg-displays
 windowrule=isfloating:1,appid:qimgv
 windowrule=isfloating:1,appid:galculator
 windowrule=isfloating:1,appid:transmission-gtk
 windowrule=isfloating:1,appid:nwg-look
 windowrule=isfloating:1,appid:pavucontrol
 windowrule=isfloating:1,appid:blueman-manager
-windowrule=isfloating:1,appid:swappy
+windowrule=isfloating:1,appid:nm-connection-editor
 windowrule=isfloating:1,appid:thunar,title:^(File Operation Progress|Confirm|Properties|Rename|Create|Error|Question|Warning).*
 
 # Start Waybar & Wallpapersonce when Mango launches
