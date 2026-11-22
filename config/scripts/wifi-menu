@@ -1,4 +1,8 @@
+
 #!/usr/bin/env bash
+
+# Fuzzel configuration
+FUZZEL_CONFIG="$HOME/.config/mango/fuzzel/fuzzel.ini"
 
 # Ensure fuzzel is installed
 if ! command -v fuzzel >/dev/null 2>&1; then
@@ -12,19 +16,22 @@ WIFI_STATE=$(nmcli -fields WIFI g | sed -n '2p' | tr -d ' ')
 if [ "$WIFI_STATE" = "enabled" ]; then
     TOGGLE="    Disable Wi-Fi"
     nmcli device wifi rescan >/dev/null 2>&1
+
     NETWORKS=$(nmcli -t -f IN-USE,SSID,SIGNAL,SECURITY device wifi list | awk -F: '
         $2 != "" && !seen[$2]++ {
             icon = ($1 == "*") ? "✓ " : "  "
             lock = ($4 != "" && $4 != "--") ? "" : ""
             printf "%s%s  (%s%%) %s\n", icon, $2, $3, lock
         }')
+
     LIST=$(printf "%s\n%s" "$TOGGLE" "$NETWORKS")
 else
     LIST="    Enable Wi-Fi"
 fi
 
-# Launch fuzzel in dmenu mode
-CHOSEN=$(printf "%s\n" "$LIST" | fuzzel --dmenu -p "Wi-Fi: ")
+# Launch fuzzel in dmenu mode using MangoWC styling
+CHOSEN=$(printf "%s\n" "$LIST" | fuzzel --config "$FUZZEL_CONFIG" --dmenu -p "Wi-Fi: ")
+
 [ -z "$CHOSEN" ] && exit 0
 
 # Handle Wi-Fi toggle
@@ -44,10 +51,11 @@ if nmcli -t -f NAME connection show | grep -Fxq "$SSID"; then
     nmcli connection up id "$SSID" && notify-send "Wi-Fi" "Connected to $SSID"
 else
     if echo "$CHOSEN" | grep -q ""; then
-        PASS=$(fuzzel --dmenu --password -p "Password: " < /dev/null)
+        PASS=$(fuzzel --config "$FUZZEL_CONFIG" --dmenu --password -p "Password: " < /dev/null)
         [ -z "$PASS" ] && exit 0
         nmcli device wifi connect "$SSID" password "$PASS" && notify-send "Wi-Fi" "Connected to $SSID"
     else
         nmcli device wifi connect "$SSID" && notify-send "Wi-Fi" "Connected to $SSID"
     fi
 fi
+
