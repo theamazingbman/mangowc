@@ -308,6 +308,20 @@ gesturebind=none,down,4,leaveoverview
 layer_rule=animation_type_open:zoom,layer_name:rofi
 layer_rule=animation_type_close:zoom,layer_name:rofi
 
+# --- floating rules ---
+# quickshell's network app (its own qs instance) — a small tool window that sizes itself to its content
+windowrule=isfloating:1,appid:org.quickshell
+windowrule=isfloating:1,appid:mpv
+windowrule=isfloating:1,appid:org.gnome.Loupe
+windowrule=isfloating:1,appid:qimgv
+windowrule=isfloating:1,appid:galculator
+windowrule=isfloating:1,appid:transmission-gtk
+windowrule=isfloating:1,appid:nwg-look
+windowrule=isfloating:1,appid:pavucontrol
+windowrule=isfloating:1,appid:blueman-manager
+windowrule=isfloating:1,appid:swappy
+windowrule=isfloating:1,appid:thunar,title:^(File Operation Progress|Confirm|Properties|Rename|Create|Error|Question|Warning).*
+
 # Start Waybar & Wallpapersonce when Mango launches
 exec_once=waybar -c /home/terryb/.config/mango/waybar/config.jsonc -s /home/terryb/.config/mango/waybar/style.css
 exec_once=waypaper --restore
