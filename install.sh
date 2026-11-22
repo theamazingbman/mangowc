@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # ==========================================================
-# Terry's Fedora Sway Setup Installer
-# Minimal Fedora + Sway + Waybar
+# Terry's Fedora MangoWC Installer
+# Minimal Fedora + MangoWC + Waybar
 # Foot + Fuzzel + SwayNC + Thunar + Flatpak
 #
 # Display manager (login screen) handling:
@@ -128,7 +128,7 @@ fi
 
 printf '%b' "$CYAN"
 echo "  +-+-+-+-+-+-+-+-+-+-+-+-+  "
-echo "  |   TERRY'S SWAY SETUP   |  "
+echo "  |  TERRY'S MANGOWC SETUP |  "
 echo "  +-+-+-+-+-+-+-+-+-+-+-+-+  "
 echo "  |     MINIMAL FEDORA     |  "
 echo "  +-+-+-+-+-+-+-+-+-+-+-+-+  "
