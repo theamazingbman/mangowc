@@ -186,7 +186,7 @@ bind=SUPER,f,spawn,thunar
 bind=SUPER,g,spawn,geany
 
 # exit
-bind=SUPER,m,quit
+bind=SUPER+SHIFT,q,quit
 bind=SUPER,q,killclient,
 
 # switch window focus
