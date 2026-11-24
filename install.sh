@@ -717,6 +717,35 @@ if [[ "$ONLY_CONFIG" == false ]] && command -v flatpak >/dev/null 2>&1; then
   fi
 fi
 
+# --- SDDM Theme & Background Setup ---
+SDDM_THEME="elarun"
+SDDM_THEME_DIR="/usr/share/sddm/themes/${SDDM_THEME}"
+WALLPAPER_SRC="${HOME}/Pictures/wallpapers/wallhaven-o5z9jl.jpg"
+
+sudo dnf install -y sddm-themes
+
+if [ -d "$SDDM_THEME_DIR" ]; then
+    sudo mkdir -p /etc/sddm.conf.d
+    sudo tee /etc/sddm.conf.d/theme.conf > /dev/null <<EOF
+[Theme]
+Current=${SDDM_THEME}
+EOF
+
+    if [ -f "$WALLPAPER_SRC" ]; then
+        sudo cp "$WALLPAPER_SRC" "${SDDM_THEME_DIR}/"
+        sudo chmod 644 "${SDDM_THEME_DIR}/wallhaven-o5z9jl.jpg"
+        sudo tee "${SDDM_THEME_DIR}/theme.conf.user" > /dev/null <<EOF
+[General]
+background=wallhaven-o5z9jl.jpg
+type=image
+EOF
+    else
+        echo "Warning: Wallpaper not found at $WALLPAPER_SRC — skipping SDDM background override."
+    fi
+else
+    echo "Warning: Theme directory $SDDM_THEME_DIR not found after installing sddm-themes."
+fi
+
 # ----------------------------------------------------------
 # Summary
 # ----------------------------------------------------------
