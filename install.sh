@@ -720,7 +720,7 @@ fi
 # --- SDDM Theme & Background Setup ---
 SDDM_THEME="elarun"
 SDDM_THEME_DIR="/usr/share/sddm/themes/${SDDM_THEME}"
-WALLPAPER_SRC="${HOME}/Pictures/wallpapers/wallhaven-o5z9jl.jpg"
+WALLPAPER_SRC="${HOME}/Pictures/wallpapers/whlogin1.png"
 
 sudo dnf install -y sddm-themes
 
@@ -733,10 +733,10 @@ EOF
 
     if [ -f "$WALLPAPER_SRC" ]; then
         sudo cp "$WALLPAPER_SRC" "${SDDM_THEME_DIR}/"
-        sudo chmod 644 "${SDDM_THEME_DIR}/wallhaven-o5z9jl.jpg"
+        sudo chmod 644 "${SDDM_THEME_DIR}/whlogin1.png"
         sudo tee "${SDDM_THEME_DIR}/theme.conf.user" > /dev/null <<EOF
 [General]
-background=wallhaven-o5z9jl.jpg
+background=whlogin1.png
 type=image
 EOF
     else
